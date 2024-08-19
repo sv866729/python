@@ -3,12 +3,12 @@ import time
 import os
 
 # Constants
-WAIT_TIME_S = 600 # Time between each network connectivity check
-PING_HOST = '8.8.8.8' # Host used to determine network connectivity
-PING_COUNT = 4 # Number of pings
-YAMLFILE = "Filename.yaml" # Yaml file name
+WAIT_TIME_S = 20 # Time between each network connectivity check
+PING_HOST = "8.8.8.8" # Host used to determine network connectivity
+PING_COUNT = "4" # Number of pings
+YAMLFILE = "file.yaml" # Yaml file name
 CUSTOMPATH = '/home/user' # file path to store the yaml file
-NETPLANPATH = '/etc/netplan' # Default netplan path
+NETPLANPATH = '/etc/' # Default netplan path
 
 
 def ping_host_count(host):
@@ -26,9 +26,10 @@ def ping_host_count(host):
 
     # Get the standard output from the result
     output = result.stdout
-
+    pingcount = output.count(host)
+    print(f"Ping count {pingcount-3}")
     # Return the count
-    return output.count(host)
+    return pingcount
 
 
 # Logic of script
@@ -60,11 +61,13 @@ def logic():
 
     # If the file is already in the netplan file then move it out and reboot
     if os.path.isfile(netplan_file_path):
+        print(f"Option1 moviong file {YAMLFILE} to {custom_file_path}")
         subprocess.run(['mv', netplan_file_path, custom_file_path])
         subprocess.run(['reboot'])
 
     # If the file is not yet configured then do the configuration
     elif os.path.isfile(custom_file_path):
+        print(f"Option2 moving file {YAMLFILE} to {netplan_file_path}")
         subprocess.run(['mv', custom_file_path, netplan_file_path])
         subprocess.run(['netplan', 'apply'])
         subprocess.run(['reboot'])
@@ -77,13 +80,16 @@ def main():
     # Wait X amount of time
     time.sleep(WAIT_TIME_S)
     # First network connectivity test
-    if (PING_COUNT + 3) != ping_host_count(PING_HOST):
+    if (int(PING_COUNT) + 3) != ping_host_count(PING_HOST):
+        print("First Fail")
         # Wait x time if failed
         time.sleep(WAIT_TIME_S)
         # Second network connectivity test
-        if (PING_COUNT + 3) != ping_host_count(PING_HOST):
+        if (int(PING_COUNT) + 3) != ping_host_count(PING_HOST):
+            print("Second Fail executing logic option")
             # If failed run logic 
             logic()
+    print("Online")
     return
 
 
