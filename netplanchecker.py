@@ -55,7 +55,7 @@ def logic():
     """
         
     # File paths being tested to determine current configuration
-    netplan_file_path = os.path.join(NETPLANPATH , YAMLFILE)
+    netplan_file_path = os.path.join(NETPLANPATH, YAMLFILE)
     custom_file_path = os.path.join(CUSTOMPATH, YAMLFILE)
 
     # If the file is already in the netplan file then move it out and reboot
@@ -69,8 +69,7 @@ def logic():
         subprocess.run(['netplan', 'apply'])
         subprocess.run(['reboot'])
     # if the files are in the wrong location or dont exist no actions would be performed
-    else:
-        return
+    return
 
 
 # Main funtion
@@ -78,15 +77,14 @@ def main():
     # Wait X amount of time
     time.sleep(WAIT_TIME_S)
     # First network connectivity test
-    if (PING_COUNT + 3) != ping_host_count(ping_host_count):
+    if (PING_COUNT + 3) != ping_host_count(PING_HOST):
         # Wait x time if failed
         time.sleep(WAIT_TIME_S)
         # Second network connectivity test
-        if (PING_COUNT + 3) != ping_host_count(ping_host_count):
+        if (PING_COUNT + 3) != ping_host_count(PING_HOST):
             # If failed run logic 
             logic()
     return
-
 
 
 # This block runs when the script is executed directly
