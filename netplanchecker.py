@@ -1,14 +1,15 @@
 import subprocess
 import time
 import os
+import sys 
 
 # Constants
-WAIT_TIME_S = 20 # Time between each network connectivity check
+WAIT_TIME_S = 300 # Time between each network connectivity check
 PING_HOST = "8.8.8.8" # Host used to determine network connectivity
 PING_COUNT = "4" # Number of pings
 YAMLFILE = "file.yaml" # Yaml file name
-CUSTOMPATH = '/home/user' # file path to store the yaml file
-NETPLANPATH = '/etc/' # Default netplan path
+CUSTOMPATH = '/home/user/' # file path to store the yaml file
+NETPLANPATH = '/etc/netplan/' # Default netplan path
 
 
 def ping_host_count(host):
@@ -74,9 +75,29 @@ def logic():
     # if the files are in the wrong location or dont exist no actions would be performed
     return
 
+def cron_creator():
+    # Locate the Python interpreter
+    python_bin_path = sys.executable
+
+    # Get the full path of the current script
+    script_path = os.path.abspath(__file__)
+
+    # Construct the cron command to check
+    cron_command = f"@reboot {python_bin_path} {script_path}"
+
+    # Check if the cron job already exists
+    existing_crontab = os.popen('crontab -l').read()
+
+    if cron_command in existing_crontab:
+        print("Cron job already exists.")
+    else:
+        # Add the cron job
+        os.system(f'(crontab -l ; echo "{cron_command}") | crontab -')
+        print(f"Cron job added to run {script_path} at system startup using {python_bin_path}.")
 
 # Main funtion
 def main():
+    cron_creator()
     # Wait X amount of time
     time.sleep(WAIT_TIME_S)
     # First network connectivity test
@@ -89,7 +110,8 @@ def main():
             print("Second Fail executing logic option")
             # If failed run logic 
             logic()
-    print("Online")
+    else:
+        print("Online")
     return
 
 
