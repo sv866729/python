@@ -123,7 +123,7 @@ def getSessionInformation(filepath, userID):
 
 def main():
     print("Lets get this login information")
-    filepath = input("Please Enter Purview audit filepath: ")
+    filepath = r"{}".format(input("Please Enter Purview audit filepath: "))
     userID = input("Please enter UserID to get login information from: ")
     sessionsinfo = getSessionInformation(filepath, userID)
     for session, ip_data in sessionsinfo.items():
