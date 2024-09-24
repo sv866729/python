@@ -24,7 +24,7 @@ def opertaionRows(filepath,operation: str,userId:str):
     OPERATIONCOLUMN = 3
     USERIDCOLUMN = 4
     operationRows = []
-    with open(filepath,newline='') as logfiledcsv:
+    with open(filepath,newline='',encoding='utf-8') as logfiledcsv:
         logreader = csv.reader(logfiledcsv)
         for row in logreader:
             if row[OPERATIONCOLUMN].lower() == operation.lower() and row[USERIDCOLUMN].lower() == userId.lower():
@@ -122,19 +122,26 @@ def getSessionInformation(filepath, userID):
     return sessioninformation
 
 def main():
-    print("Lets get this login information")
-    filepath = r"{}".format(input("Please Enter Purview audit filepath: "))
-    userID = input("Please enter UserID to get login information from: ")
-    sessionsinfo = getSessionInformation(filepath, userID)
-    for session, ip_data in sessionsinfo.items():
-        print(f"session: {session}")
-        for ip, location in ip_data.items():
-            city, state, country = location
-            print(f"  IP Address: {ip}")
-            print(f"    City: {city}")
-            print(f"    State: {state}")
-            print(f"    Country: {country}")
-        print()
+    print("Let's get this login information")
+    filepath = input("Please Enter Purview audit filepath: ").strip()  # Removed r"{}" formatting
+    userID = input("Please enter UserID to get login information from: ").strip()  # Stripping any accidental spaces
+    try:
+        sessionsinfo = getSessionInformation(filepath, userID)
+        for session, ip_data in sessionsinfo.items():
+            print(f"Session: {session}")
+            for ip, location in ip_data.items():
+                city, state, country = location
+                print(f"  IP Address: {ip}")
+                print(f"    City: {city}")
+                print(f"    State: {state}")
+                print(f"    Country: {country}")
+            print()
+    except FileNotFoundError:
+        print(f"Error: The file at {filepath} was not found.")
+    except Exception as e:
+        print(f"An error occurred: {e}")
+    input("Press any key to close")  # No need to store input, just waiting for the user to press any key
+
 
 if __name__ == "__main__":
     main()
