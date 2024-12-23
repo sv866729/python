@@ -4,8 +4,8 @@ import requests
 import base64
 import socket
 
-# Find the file in /etc/openvpn/ starting with client01
-file_path = glob.glob('/etc/openvpn/client01*')[0]  # Get the first match
+
+file_path = '' 
 
 # Get the device hostname
 hostname = socket.gethostname()
@@ -14,9 +14,9 @@ hostname = socket.gethostname()
 token = ''
 repo = ''
 owner = ''
-dest_path = f'configs/{hostname}.ovpn'  # Save the file with the hostname as the filename
+dest_path = f'' 
 
-# Read the OpenVPN configuration file and base64 encode it
+
 with open(file_path, 'rb') as file:
     content = base64.b64encode(file.read()).decode('utf-8')
 
